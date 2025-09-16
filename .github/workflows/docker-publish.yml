@@ -1,12 +1,12 @@
-﻿name: Publish Docker image
+name: Publish Docker image
 
 on:
   push:
-    branches: [ "main" ]   # roda a cada push na main
-  workflow_dispatch:       # permite rodar manualmente
+    branches: [ "main" ]
+  workflow_dispatch:
 
 env:
-  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+  IMAGE_NAME: vinipereira21/projeto-github   # ajuste aqui se usar outro repo do Hub
 
 jobs:
   build-and-push:
@@ -26,6 +26,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Sanity check (who am I)
+        run: docker info | grep Username || true
 
       - name: Build and push
         uses: docker/build-push-action@v6
