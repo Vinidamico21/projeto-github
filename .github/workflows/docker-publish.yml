@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: vinipereira21/projeto-github   # ajuste aqui se usar outro repo do Hub
+  IMAGE_NAME: vinipereira21/projeto-github   
 
 jobs:
   build-and-push:
