@@ -1,43 +1,27 @@
-name: Publish Docker image
+name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
-
-env:
-  IMAGE_NAME: vinipereira21/projeto-github   
+    branches: ["main"]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout do código
+        uses: actions/checkout@v3
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
+      - name: Login no Docker Hub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Sanity check (who am I)
-        run: docker info | grep Username || true
+      - name: Build da imagem
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/minha-app:latest .
 
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
-          provenance: false
-          sbom: false
+      - name: Push da imagem
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/minha-app:latest
